@@ -41,7 +41,7 @@
 		},
 
 		greeting: function() {
-			return greetings[this.language] + ' ' + this.firstname + '!';
+			return greetings[this.language] + ' ' + this.firstName + '!';
 		},
 
 		formalGreeting: function() {
@@ -70,7 +70,7 @@
         
         log: function() {
             if (console) {
-                console.log(logMessages[this.language] + ': ' + this.fullName()); 
+                console.log(logMessages[this.language] + ': ' + this.fullname()); 
             }
                             
             return this;
@@ -87,7 +87,7 @@
 
 	}; 
 
-	Greetr.init(firstName, lastName, language){
+	Greetr.init = function(firstName, lastName, language) {
 			var self = this;
 			self.firstName = firstName || '';
 			self.lastName = lastName || '';
