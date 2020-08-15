@@ -1,0 +1,338 @@
+Objects - primitive "property" , object "property" , function "method"
+object has some address in memory. it will have references to properties and methods also sitting in memory.
+
+Not everything in JavaScript is an object. Primitive values(created from literals) like Strings, numbers, 
+booleans,etc are not, although they have object counterparts.
+Primitive values, like "John Doe", cannot have properties or methods (because they are not objects).
+But with JavaScript, methods and properties are also available to primitive values, because JavaScript 
+treats primitive values as objects when executing methods and properties.
+
+Computed member access operator ... [ ... ] - example: person["name"] . It takes the object and property/method
+name and looks for it in the object. If it doesn't exist, it creates it.
+Dot operator - does the exact same thing. example: person.name = "Mark";
+
+var person=new Object(); //creates new object
+Object literal {} - creates new object. example var person = {name: "Parth"};
+
+namespace - container for variables and functions. Typically to keep variables and functions with the same name
+separate. JS doesn't have namespaces. We can fake it. Can use objects as container for the properties and methods
+we want to use, to avoid namespace collisions. 
+
+JSON(JavaScript object notation) - inspire by JS object literal syntax. But different. key in JSON must be enclosed 
+in double quotes. The only time you need to enclose a key in quotes when using Object Literal notation is where the 
+key contains a special character (if, :, - etc). But we are free to do that, so JSON is a subset of object literal
+notation. JSON cant represent functions or dates.
+
+In JS, functions are objects. JS has first class functions.
+First class functions - everything you can do with other types, you can do with functions. Assign them to variables,
+pass them around, create them on the fly.
+Functions are a special type of object, can attach properties(primitive/object)/methods to it. Functions have hidden
+special properties - Name(optional - func can be anonymous), code property(where actual lines of code written sit).
+The code property is invocable ().
+
+Expression - a unit of code that results in a value. Don't have to save to a variable.
+example a=3; or 1+2; Both are expressions that return a value 3.
+Function expression/any expression in JS ends up creating a value.
+A statement doesn't return a value. example: if(a===3){} //it returns no value.
+we can't say var x = if(a===3){}; // if is a statement and inside statement we have a expression.
+In JS, we have both function statements and function expressions.
+greet();
+function greet() {  //this is a function statement as during execution phase it doesnt result in a value
+    console.log('hi');   
+}
+
+var anonymousGreet = function() { //this is a function expression, return a function object
+    console.log('hi');   
+}
+anonymousGreet(); //the variable points to the address where the object lives, () invokes its code property
+
+Function expressions aren't hoisted as in creation phase the variable has the value undefined. If we tried to call
+using the variable before it is set the function in execution phase, it will give error(Undefined is not a function).
+
+function log(a) {
+   a();    //invoke the passed function
+}
+
+log(function() {  //create a function on fly, pass function expression to another function as a parameter
+    console.log('hi');   
+});
+
+All Primitive types are copied by value, i.e another copy is made in memory with the same value.
+All Objects(including functions) are passed by reference, both variables will point to the same location in memory.
+Objects are passed by reference even as parameters.
+Equals operator sets up new memory space. example c={greeting:"hello"}; //c now points to this new object and not 
+what it was pointing to earlier.
+Avoid String, Number, and Boolean objects. They complicate your code and slow down execution speed. example: new Number()
+
+When a function is invoked i.e its code property is invoked, a new execution context is created. Each execution context
+has a variable environment(where variables created inside the function live), reference to outer(lexical) environment, and
+'this' variable(which points to a different object depending on how the function is invoked). (Also a arguments keyword is setup).
+From a function inside an object, the 'this' keyword points to the object. But if there are internal functions i.e functions
+inside the function in that object, then the 'this' keyword would point to the global object.Can get around that by using another 
+variable self and setting it, var self = this; inside the first level function, then we can use this self variable instead of the
+this keyword inside internal functions.
+
+Function parameters are listed inside the parentheses () in the function definition.
+Function arguments are the values received by the function when it is invoked.
+Inside the function, the arguments (the parameters) behave as local variables.
+
+'arguments' (also setup in execution context) contains list of all values/parameters that we pass to a function. accesed using
+arguments keyword.
+We can chose to not pass all/or pass less parameters inside a call, even if the function definition expects them, as due to hoisting 
+those expected parameters will be set to undefined, and so will not cause error if used, just undefined. Can set default values if 
+browser supports, or just use this approach: para1 = para1 || 'value';
+the arguments list is array-like but not exactly. the brackets look italicized. Acts enough like array, can use in similar way.
+
+Modern way is to use spread operator ( ...other) .It bundles all passed parameters into an array.
+
+Arrays are collections of anything. The elements can combination of different types. Strings, number, boolena, objects, functions.
+Arrays with named indexes are called associative arrays (or hashes). JavaScript does not support arrays with named indexes.
+In JavaScript, arrays use numbered indexes. In JavaScript, objects use named indexes. Arrays are a special kind of objects, with numbered indexes.
+
+JS doesn't have function overloading. There are patterns to emulate that.
+
+Syntax parser of JS engine goes through the code character-by-character, uses rules to decide whats valid syntax and decides what is 
+intended. Happens before code is executed.
+
+Automatic semicolon insertion - can be dangerous. semicolons are optional. as syntax parser goes character by character, anywhere it expects
+a semicolon to be present but missing, it puts it there.
+example: return
+	{ firstname: "Parth"}
+there is carriage return(next line0 after return keyword, so JS automatically inserts a semicolon, and value returned is undefined and not
+the object.
+should do this instead: (put bracket in same line)
+return {
+	firstname: "Parth"
+	}
+
+whitespace - invisible characters that create literal 'space' in written code. carriage returns, tabs, spaces. Syntax parser ignores whitespace.
+
+
+IIFE(Immediately invoked function expressions) - example:
+var greeting = function(name) {  //greeting will get the value returned(not the function object) i.e Hello John
+    return 'Hello ' + name;
+}('John');
+
+Expressions can just be written, will not give error. example: 
+3; //its a valid expression
+"hello"; //valid
+
+Same for function expressions
+// IIFE
+var firstname = 'John';
+// not putting the whole function expression inside parantheses would give error as parser sees word function and expects a func statement.
+//but this is valid as it sees ( as the first character and then doesnt expect a function statement
+(function(name) {  
+    var greeting = 'Inside IIFE: Hello';
+    console.log(greeting + ' ' + name);
+}(firstname)); // IIFE
+
+IIFE creates its own execution context when it is invoked, so it does not interfere with the global context and is therefore a safe way
+to ensure that code from other scripts and contexts do not interfere with it. Used in many JS frameworks and libraries like underscore.js
+for this reason. Whole code is put inside a IIFE.
+(function(global, name) {  
+    var greeting = 'Inside IIFE: Hello';
+    console.log(greeting + ' ' + name);
+}(window, firstname)); //could just pass the global object if we want to use it
+
+
+Closures - 
+function greet(whattosay) {
+   return function(name) {
+       console.log(whattosay + ' ' + name);
+   }
+}
+var sayHi = greet('Hi');
+sayHi('Tony'); //outputs Hi Tony
+How does the sayHi function know the value for whattosay, even as the greet function was popped off the execution stack?
+This is possible beacause of closures. Under normal circumstances, JS engine clears out(process called garbage collection) the space in 
+memory where the variables/functions created inside the execution context live, after execution context is popped off. But now the whattosay
+stays there in memory, and when sayHi is called annd its execution context is created, it is not able to find the value for whattosay in its
+own variable environment, so it goes up the scope chain with the outer lexical environment reference. Even though execution context of greet
+was popped off, sayHi still has reference to memory of its outer environment. So any functions created inside of greet will have reference to 
+its memory(which stays there), even if it has been popped off the execution stack. So the execution context has 'closed in' its outer variables,
+and still has their references. So JS engine ensures the access to variable a function is supposed to have access to, scope remains intact.
+function buildFunctions() { 
+    var arr = [];
+    for (var i = 0; i < 3; i++) {  
+        arr.push(
+            function() {
+                console.log(i);   
+            }
+        )
+    }
+    return arr;
+}
+var fs = buildFunctions();
+fs[0](); //outputs 3
+fs[1](); //outputs 3
+fs[2](); //outputs 3
+why all output 3? execution context of buildFunctions() will have variables i and arr. at each execution of loop, a function definition is 
+pushed to arr, but it isnt being invoked then. i has final value of 3, execution context of buildFunction is popped out of stack. i=3 and
+the array arr remains in memory. when fs in invoked, its execution context is created but there is no variable i in it, so it checks its outer
+environment which have i=3 in the memory. same for all invocations of fs as they have same outer environment references as they were created
+inside the same function. These variables(that are outside a function, but still have access to) are called free variables.
+What If we want them to output 0 1 2?
+function buildFunctions2() {
+    var arr = []; 
+    for (var i = 0; i < 3; i++) {
+        arr.push(
+            (function(j) {  //IIFE
+                return function() {
+                    console.log(j);   
+                }
+            }(i)) //execute the function on the fly so it creates a new execution context with the passed value i which is different every time
+        )        // and due to closure all the 3 different j will be available even after these execution contexts are done.
+    }   
+    return arr;
+}
+var fs2 = buildFunctions2();
+fs2[0]();
+fs2[1]();
+fs2[2]();
+//or if we want to do it modern way using ES6, we can use 'let'
+function buildFunctions2() {
+    var arr = []; 
+    for (var i = 0; i < 3; i++) {
+	let j=i; 
+// let variable is scoped to the block so with each iteration of for loop this is a new variable in memory and it will be segmentedin the side
+of memory of this execution context with each invocation of function j will be a different variable(subsegmented - seperately scoped variable).
+        arr.push(
+            function() {
+                return function() {
+                    console.log(j);   
+                }
+            }
+        )        
+    }   
+    return arr;
+}
+
+Function Factories - return or makes other functions.
+function makeGreeting(language) {
+    return function(firstname, lastname) {   
+        if (language === 'en') {
+            console.log('Hello ' + firstname + ' ' + lastname);   
+        }
+        if (language === 'es') {
+            console.log('Hola ' + firstname + ' ' + lastname);   
+        }       
+    }  
+}
+var greetEnglish = makeGreeting('en');  //creates a execution context with language='en'. the function returned through scope chain will use 'en'.
+var greetSpanish = makeGreeting('es');  //creates a new execution context with language='es'. the function returned through scope chain will use 'es'.
+greetEnglish('John', 'Doe'); //outputs Hello John Doe. 
+//execution context is created for greetEnglish. But there are 2 language values now in its outer environent. But JS engine knows which value was created
+// inside the execution context, that greetEnglish was created inside of. So that becomes the closure.
+greetSpanish('John', 'Doe'); //outputs Hola John Doe
+// everytime a function is called it will create a new execution context, and any functions created inside of it will point to that execution context.
+
+Closures and callbacks - 
+function sayHiLater() {
+    var greeting = 'Hi!';
+    setTimeout(function() { 
+//setTimeout goes off outside in the browser, counts and wait and then drops an event that 3s are over, engine checks if any function is listening, finds the
+//callback passed to setTimeout and runs it. greeting doesnt exist inside it as sayHilater has already finished. so it goes up scope chain and it has closure for 
+// the greeting variable, and has access to it.
+        console.log(greeting); 
+    }, 3000);
+}
+sayHiLater();
+// jQuery uses function expressions and first-class functions!
+//$("button").click(function() {  
+//});
+Callback function - a function you give to another function, to be run when the other function is finished. So the fuction you call(invoke), 'calls back' by calling
+the function you gave when it finishes.
+function tellMeWhenDone(callback) {
+    var a = 1000; // some work
+    var b = 2000; // some work   
+    callback(); // the 'callback', it runs the function I give it!   
+}
+tellMeWhenDone(function() {  
+    console.log('I am done!');   
+});
+tellMeWhenDone(function() {
+    console.log('All done...'); 
+});
+
+call(), apply(), bind() - function execution context has variable environment, 'this' and outer environment. 'this' can reference either the global object or the 
+object that contains the function. Function object has optional 'name', invocable 'code', call(), apply(), bind() methods. All 3 methods have to do with 'this' 
+variable and the arguments passed to the function.
+var person = {
+    firstname: 'John',
+    lastname: 'Doe',
+    getFullName: function() {
+        var fullname = this.firstname + ' ' + this.lastname;
+        return fullname;
+    }
+}
+
+var logName = function(lang1, lang2) {
+    console.log('Logged: ' + this.getFullName()); //would have normally got an error as 'this' would have pointed to global object without a getFullName method.
+    console.log('Arguments: ' + lang1 + ' ' + lang2);
+    console.log('-----------');   
+}
+
+var logPersonName = logName.bind(person); 
+//using the logName function object and not invoking it (). 'this' variable will bind to 'person' object when the function runs. bind return a new copy of the function.
+logPersonName('en'); //outputs Logged: John Doe and Arguments: en undefined
+logName.call(person, 'en', 'es'); //calls the function but also lets decide what 'this' will mean and allows parameters. It executes directly, does not make copy.
+logName.apply(person, ['en', 'es']); //only difference between call and apply is that apply wants array of parameters.
+
+(function(lang1, lang2) {
+    console.log('Logged: ' + this.getFullName());
+    console.log('Arguments: ' + lang1 + ' ' + lang2);
+    console.log('-----------');
+}).apply(person, ['es', 'en']); //can use call() also like this.
+
+When will these things be used? Examples -
+// function borrowing
+var person2 = {  // this object doesn't have getFullName function
+    firstname: 'Jane',
+    lastname: 'Doe'
+}
+console.log(person.getFullName.apply(person2)); //borrows function from person object and says that 'this' keyword should now point to person2 object.
+
+// function currying - creating a copy of a function but with some preset parameters - useful for mathematical libraries
+function multiply(a, b) {
+    return a*b;   
+}
+var multipleByTwo = multiply.bind(this, 2); //way to set permanent values of parameters inside this copy function. a will always be 2.
+console.log(multipleByTwo(4)); // 4 will be the second parameter value
+
+var multipleByThree = multiply.bind(this, 3);
+console.log(multipleByThree(4)); //even if we were to pass two parameters here, only one value will be used
+
+
+Functional programming - as JS has first class functions, we can implement functional programming. Code in terms of functions. 
+function mapForEach(arr, fn) { 
+    var newArr = [];
+    for (var i=0; i < arr.length; i++) {
+        newArr.push(
+            fn(arr[i])   
+        )
+    };
+    return newArr;
+}
+var arr1 = [1,2,3];
+console.log(arr1);
+var arr2 = mapForEach(arr1, function(item) {
+   return item * 2; 
+});
+console.log(arr2);
+var arr3 = mapForEach(arr1, function(item) {
+   return item > 2; 
+});
+console.log(arr3);
+var checkPastLimit = function(limiter, item) {  //this function takes 2 parameters, but fn in mapForEach takes only 1
+    return item > limiter;   
+}
+var arr4 = mapForEach(arr1, checkPastLimit.bind(this, 1)); // set the first parameter(limiter) value permanently to 1
+console.log(arr4);
+var checkPastLimitSimplified = function(limiter) {
+    return function(limiter, item) {
+        return item > limiter;   
+    }.bind(this, limiter); 
+};
+var arr5 = mapForEach(arr1, checkPastLimitSimplified(1)); //now no need to use bind everytime, just pass the limiter value
+console.log(arr5);

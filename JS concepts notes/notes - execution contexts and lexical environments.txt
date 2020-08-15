@@ -1,0 +1,122 @@
+Syntax Parser - A program that reads your code and determines what it does and if 
+its grammar or syntax is valid.
+
+Lexical environment - Where something sits physically
+in the code you write, the word lexical means having to do with words or grammar.
+So we're talking about the code you're writing, it's syntax, it's vocabulary. Now, lexical
+environment exists in programming languages in which where you write something is important.
+let's say a function, with a variable inside of it.The variable sits lexically
+inside the function, that is physically the code that you're writing, that's where it sits.
+The program, the compiler that's converting your code to those instructions cares
+about where you put things, and what surround it.
+
+Execution context - A wrapper to help manage the code that is running. There are lots of 
+lexical environments,areas of the code that you are looking at physically. But which one 
+is currently actually running? Is managed via what's called execution contexts.
+And an execution context contains your code, the running code. It's running your code, but
+it also can contain things beyond what you've written in your code. Cuz remember again,
+your code is being translated, being processed by a whole other feature.
+A whole other set of programs that someone else wrote.
+Base execution context is Global execution context.
+
+Object - Simply in JS, a collection of name-value pairs. Value might be other name-value pairs.
+
+Global execution context - global means things accessible everywhere in code - "Not inside a function".
+JS engine Creates 2 things - Global Object, special variable 'this'.
+In case of browsers, the global object is 'window'. Each tab will have its own object.
+At global level, this = window. Variables and functions created outside all other functions
+get attached to the window object. At global level, there is no "Outer Environment" i.e its 'null'.
+
+Hoisting - Variable and functions are to some degree available even if they are written later in
+the code, because the execution context is created in two phases.
+First phase(Creation phase) - global object and 'this' are set up in memory. Reference or link to Outer environment
+if there is one. Memory space is set up for variables and functions before the line by line execution begins (Hoisting). 
+So during execution, JS engine can access them. But different manner for functions and variables.
+Function in its entirety is placed into memory space, meaning that the function, its name and the code
+inside the function is being executed. Variables have 'undefined' values as a placeholder. Value assignemnt happens
+in execution phase. So should not rely on hoisting and should always access variables after they have been assigned
+values.
+
+undefined is a special keyword/value meaning the variable hasn't been set, but it takes space in memory.
+we can set a variable to undefined explicitly, but shouldn't.
+
+Execution phase - runs code line by line. Interpret, Convert, Compile, Execute. 
+
+Single threaded synchronous execution - Only one command is executed at a time. JS may not be single
+threaded under the hood, but from a programmer prospective it behave like it. Synchronous means one
+at a time, and in order. JS is single threaded synchronous execution in behavior.
+
+Function Invocation and Execution Stack - invocation means to run the function, with parantheses.
+At first, when JS code is run a Global execution context is created. Execution stack has Global 
+execution context at bottom. Memory is setup for variables and functions in the creation phase.
+Anytime we execute/invoke a function, a new execution context is created and put on the execution stack. 
+The top element of stack is the one which is currently running. Every function creates a new execution 
+context. In which 'this' variable is created for that function, then it runs through the creation phase 
+sets up variables, and then executes the code line by line within the function.
+Even if a function is invoking itself, same process happens.
+When one function finishes, it pops from stack.
+
+Variable environment - where variable live(Scope) and how they relate to each other in memory. Variables(var)
+having same name but declared again inside different functions - have different values, as they are in their
+own execution contexts.
+
+Scope Chain - Scope means where a variable can be accessed. Scope chain is act for searching for chain of reference 
+to outer environment.
+Case 1 -
+function b() {
+	console.log(myVar); //outputs 1 (not 2 or undefined)
+}
+function a() {
+	var myVar = 2;
+	b();
+}
+var myVar = 1;
+a();
+
+Every execution context has a reference to its outer environment.
+For both func a and b, outer environment is global context, even though a is directly below b
+in the execution stack. In terms of lexical environment, function b sits on top of global environment, i.e 
+its not inside function a. Its on same level as the line var myVar=1; . JS cares about lexical environment
+when it comes to the outer reference that every execution context gets. When we ask for a variable in any
+particular execution context, and it cant find it, it will look at outer reference and go look for variables
+there. Where the Outer refrence points depend on where function sits lexically.
+Case 2 -
+function a() {
+    
+    function b() {
+        console.log(myVar); //outputs 2
+    }
+    	var myVar = 2; //if this was not declared output in b would have been 1
+	b();
+}
+
+var myVar = 1;
+a();
+
+
+let declaration - allows JS engine to use 'block scoping'. We cant use the variable until the line of code
+is run during the execution phase, that actually declares the variable.
+if(a>b>{
+	let c = true; //will give error
+}
+c is available only inside this block at that period of time for the running code.
+
+
+Asynchronous - means more than one at a time. JS engine(synchronous) is one part of a browser, but there are other 
+things like the rendering engine, http request, etc. JS engine has hooks where it can talk to these. Using this JS 
+engine can change what webpage looks like or request data. If all this is running asynchronously, it only means that
+the JS engine is working with these other element, asynchronously inside the browser. JS engine in itself is synchronous.
+
+Event Queue - list that sits inside the JS engine. This is full of events, notifications
+of events, that might be happening. So when the browser, somewhere outside the JavaScript engine, has an event that
+inside the JavaScript engine we want to be notified of, it gets placed on the queue. And whether or not we actually have
+a function that needs to respond to it, well, we can listen for that event and have that function handle that event, 
+but either way the event gets placed on the queue. This event queue is looked by JS when execution stack is empty, then it
+periodically looks/checks (called event loop) at event queue and waits for something to be there. If something is there it checks 
+if a particular function should be run when that event was triggered. example - clickHandler(). If a click event is there, it 
+creates execution context for that function, its processed. And next item in event queue moves up, so on. But event queue wont be 
+processed untill execution stack is empty i.e JS has finished running all other code line by line. SO it isnt really asynchronous. 
+Browser is putting things into event queue asynchronously, but code still runs line by line. So long running functions can interrupt 
+with handling events.
+This is how JS deal with asynchronous events that happens outside its engine.
+

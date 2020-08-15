@@ -1,0 +1,33 @@
+Dynamic typing - engine figures out itself what type of data a variable holds while code is running.
+Single variable can hold different type of values at different times during execution of code.
+
+Primitive types - represent a single value(not an object). 6 types - undefined, null, boolean, number
+(in JS there is only one numeric type - floating pt. number), string, symbol(ES6).
+
+A variable without a value, has the value undefined. The type is also undefined.
+the data type of null is an object. undefined and null are equal in value but different in type.
+
+Operator - actually a special function that is syntactically written differently. generally takes two
+parameters and returns one result. Knowing the type of return value is important as the type of 
+variable will be decided based on that.
+Operator precedence - which operator function gets called first. Higher pecedence first.
+Operator associativity - when they have same precedence - what order operator functions 
+get called in: left-right or right-left.
+
+Coercion - converting a value from one type to another, happens often as JS is dynamically typed.
+implicit coercion - var a = 1 + '2'; //ouptuts string - 12
+explicit coercion - Number('3') //outputs 3. Number(false) //return 0
+console.log(3<2<1); //output true as it becomes (false<1) and it becomes (0<1) so true.
+Number(undefined) //outputs NaN
+Number(null) //outputs 0
+Double equal operator (==) coerce the types and then checks for equality.
+Strict equality (===) doesn't coerce.
+
+Boolean(""), Boolean(null), Boolean(undefined) all give false. i.e Whenever lack of existence.
+Useful in conditional statements. 0 also converts to false.
+if(a || a===0) // if true then there is something inside a.
+
+undefined || 'hello' //return 'hello' and not just true
+"hi" || "hello" //return "hi" - the first one
+So when two values that can be coerced, are used with OR operator, it returns the first 
+one that can be coerced to true.

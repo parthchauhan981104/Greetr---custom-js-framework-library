@@ -1,0 +1,153 @@
+Inheritance - one object gets access to properties and methods of another object.
+Classical inheritance - popular way but also has some flaws.
+Prototypal inheritance - simple, flexible, extensible, easy to understand, but also has flaws.
+All objects in JS (including functions) have a property called __proto__ property. We can reference properties inside this object
+directly as if if were the outer object's own. example: obj.prop2 - if obj does not have a prop2 property, it will look into 
+__proto__ and look for it. __proto__ can itself point to another __proto__ , so on. So if we use obj.prop3 it will go down the
+prototype chain and look for the property. Multiple objects can share the same prototype.
+var person = {
+    firstname: 'Default',
+    lastname: 'Default',
+    getFullName: function() {
+        return this.firstname + ' ' + this.lastname;  
+    }
+}
+var john = {
+    firstname: 'John',
+    lastname: 'Doe'
+}
+// don't do this EVER!(very bad for performance)
+john.__proto__ = person;
+console.log(john.getFullName());//outputs John Doe. on invocation, the'this' variable in the execution context refers to 'john'.
+console.log(john.firstname); 
+//outputs John. As it first looks for the property in the object and asit finds it, doesn't go down the prototype chain.
+var jane = {
+    firstname: 'Jane'   
+}
+jane.__proto__ = person;
+console.log(jane.getFullName()); //outputs Jane Default
+person.getFormalFullName = function() {
+    return this.lastname + ', ' + this.firstname;   
+}
+console.log(john.getFormalFullName());
+console.log(jane.getFormalFullName());
+
+Everything in JS is an object(or a primitive). All objects including functions, arrays have a prototype, except the Base object.
+Object {} is the base object(bottom of the prototype chain), has properties and methods that all objects can access. 
+All functions have the Empty() {} protoype. It has the methods like apply, bind, call.
+
+Reflection - An object can look at itself, listing and changing its properties and methods. Can use that to implement a useful
+pattern called Extend.
+for (var prop in john){
+	console.log(prop + ': ' + john[prop]); // this is reflection as we can access john's properties/methods like this
+}
+it lists out all the properties/methods in the object 'john' including the one in the object's prototype - like getFullName.
+if (john.hasOwnProperty(prop)) // return false if property either not present at all, or in the prototype and not directly.
+Extend - a concept not built into JS directly, but can be used by us and is used inside many JS frameworks and libraries.
+It allows to combine and compose objects without using the prototype pattenrn.
+example: in underscore.js
+_.extend(john, jane, jim); 
+// will extend john and give to it the properties/methods of jane, jim directly. No need to use prototypal chain.
+
+Building objects - object literal syntax, function constructors and 'new' keyword(which actually is an operator).
+function Person(firstname, lastname) { 
+    console.log(this); // 'this' points to an empty onject in memory
+    this.firstname = firstname;
+    this.lastname = lastname;
+    console.log('This function is invoked.');
+    // return { greeting: "I got in the way}; 
+}
+var john = new Person('John', 'Doe');
+console.log(john);
+var jane = new Person('Jane', 'Doe');
+console.log(jane);
+'new' keyword immediately creates an empty object, and then the function Person() is called, which creates an execution context,
+'this' variable is available and it points to that new empty object, and the properties/methods are added to that object. JS engine
+then return this object automatically. If we try to return something explicitly from the function, thats what gets returned, it gets in the 
+way of JS engine. This way we can construct an object via a function - Function Constructor.
+
+prototype property of function is different from __proto__ for the objects created by that function constructor.
+prototype property is the blueprint for creating objects by using that (constructor) function with new keyword.
+Unless we use a function as a function constructor, the prototype for that function object is never used and just hangs there. But 
+when we use 'new' operator, then it means something. The prototype property on the function is NOT the prototype OF the function, its
+the protoype of any object created if we use the function as a function constructor.
+
+__proto__ is used in the lookup chain to resolve methods, properties. when an object is created (using constructor function with new keyword),
+__proto__ is set to (Constructor) Function.prototype
+john.__proto__ == Person.prototype //true
+__proto__ is the actual object that is used in the lookup chain to resolve methods, etc. 
+prototype is the object that is used to build __proto__ when you create an object with new.
+prototype is not available on the instances themselves (or other objects), but only on the constructor functions.
+
+If we add any properties/methods to the prototype property of the constructor function(even after the object instance has been created),
+then they become available to the instances through the prototype chain. So we can add features to all objects created this way, together
+at once. Properties are set up inside function constructors as they are different values and that necessary, but methods are put inside the 
+prototype to save memory as function are objects and take up memory space. A method added to protoype is only 1 copy available to all instances
+created from that function constructor.
+If we don't use the 'new' keyword - var john = Person('John', 'Doe'); - then the function will be invoked but it will return undefined and not
+an object. Function constructor names start with capital letters by convention to be aware of not missing the 'new' keyword.
+
+Built-in Function constructors - already available for use in JS engine. Useful to add abilities but also dangerous at times.
+example - var a = new Number(3); // 'a' is a object not a primitive, will have a prototype with methods available. can add to it. 
+similarly for String and Boolean.
+Primitive values cannot have properties or methods (because they are not objects). But with JavaScript, methods and properties are also available 
+to primitive values(only strings not numbers), because JavaScript treats primitive string values as objects when executing methods and properties. 
+Anything added to prototype is also available.
+"John".isLengthlarge(); // works fine if a method exists in the prototype
+2.isPositive(); // gives error even if method exists. numbers are not automatically converted to objects by JS engine.
+Dangers: var a = 3; var b = Number(3); 
+a==b; //returns true 	a===b; //returns false
+
+Function constructors were designed to mimic classical inheritance(that use classes and 'new'). 
+Object.create - a new feature used for pure prototypal inheritance, doesn't mimic. 
+// polyfill - code that adds a feature a engine may not have. if Object.create is not supported .
+if (!Object.create) {
+  Object.create = function (o) {
+    if (arguments.length > 1) {
+      throw new Error('Object.create implementation'
+      + ' only accepts the first parameter.');
+    }
+    function F() {} //creates a empty function
+    F.prototype = o; //sets prototype for that function equal to passed object
+    return new F();
+  };
+}
+
+var person = {
+    firstname: 'Default',
+    lastname: 'Default',
+    greet: function() {
+        return 'Hi ' + this.firstname;   
+// if we don't use 'this', it will try to find firstname inside the function, but it doesnt have so will go out to global context
+// as objects don't create new execution contexts
+    }
+}
+var john = Object.create(person); // creates an empty object with __proto__ pointing to person
+john.firstname = 'John'; //change properties
+john.lastname = 'Doe';
+console.log(john);
+
+ES6 classes - way of defining objects. JS didn't have classes until this, even now they are bit different that other languages.
+its just syntactic sugar - another way of writing but work under the hood is same(prototypal inheritance).
+class User {
+  constructor(username){
+    this.username = username;
+  }
+  login(){
+    console.log(this.username + ' just logged in');
+}
+//extends keyword is used to set the prototype (__proto__) for any objects created with this class
+class Admin extends User {  //if no constructor of its own - uses parent's constructor
+  constructor(username, title){
+    super(username); //must do this - run parent constructor(i.e call constructor of object that is the __proto__) and set up properties for this object as well.
+    this.title = title;
+  }
+  deleteUser(user){
+	// something
+  }
+}
+Difference: in other languages class is not an object, its just a template for what a object should look like and you get a object
+only after using the new keyword. But in JS even though its adding class keyword, still doesn't have classes. This is just an object
+thats being created and we are adding properties/methods to it. Its better than using function constructors as in that forgetting to write
+new keyword could cause problem, here language will know its a class and will give error if new keyword is not used. But using pure 
+prototypal inheritance is better than mimicing other languages.
