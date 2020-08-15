@@ -1,5 +1,6 @@
 // IIFE - creates a new execution context so will not interfere with the global context
-(function(global, $) {
+// semi-colon so that if any other script above it has unfinished semicolons, this will still work
+;(function(global, $) {
 
 	var Greetr = function(firstName, lastName, language){
 
