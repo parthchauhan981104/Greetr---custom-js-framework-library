@@ -7,5 +7,5 @@
 * Also support jQuery (can give it a jQuery object that points at some HTML element and fill that element with generated greeting)
 
 <br>
-Find the notes in 'JS concept notes' folder for understanding fundamental concepts in JavaScript. <br>
+Find concept notes in 'JS concept notes' folder for understanding fundamental concepts in JavaScript, used in this library. <br>
 Thanks! Anthony Alicea for the brilliant course 'JavaScript: Understanding the Weird Parts'

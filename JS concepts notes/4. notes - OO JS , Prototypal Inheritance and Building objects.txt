@@ -18,9 +18,9 @@ var john = {
 }
 // don't do this EVER!(very bad for performance)
 john.__proto__ = person;
-console.log(john.getFullName());//outputs John Doe. on invocation, the'this' variable in the execution context refers to 'john'.
+console.log(john.getFullName());//outputs John Doe. on invocation, the 'this' variable in the execution context refers to 'john'.
 console.log(john.firstname); 
-//outputs John. As it first looks for the property in the object and asit finds it, doesn't go down the prototype chain.
+//outputs John. As it first looks for the property in the object and as it finds it, doesn't go down the prototype chain.
 var jane = {
     firstname: 'Jane'   
 }
@@ -44,7 +44,7 @@ for (var prop in john){
 it lists out all the properties/methods in the object 'john' including the one in the object's prototype - like getFullName.
 if (john.hasOwnProperty(prop)) // return false if property either not present at all, or in the prototype and not directly.
 Extend - a concept not built into JS directly, but can be used by us and is used inside many JS frameworks and libraries.
-It allows to combine and compose objects without using the prototype pattenrn.
+It allows to combine and compose objects without using the prototype pattern.
 example: in underscore.js
 _.extend(john, jane, jim); 
 // will extend john and give to it the properties/methods of jane, jim directly. No need to use prototypal chain.

@@ -48,6 +48,7 @@ anonymousGreet(); //the variable points to the address where the object lives, (
 
 Function expressions aren't hoisted as in creation phase the variable has the value undefined. If we tried to call
 using the variable before it is set the function in execution phase, it will give error(Undefined is not a function).
+Anonymous functions and arrow functions can't be hoisted.
 
 function log(a) {
    a();    //invoke the passed function
@@ -68,9 +69,28 @@ When a function is invoked i.e its code property is invoked, a new execution con
 has a variable environment(where variables created inside the function live), reference to outer(lexical) environment, and
 'this' variable(which points to a different object depending on how the function is invoked). (Also a arguments keyword is setup).
 From a function inside an object, the 'this' keyword points to the object. But if there are internal functions i.e functions
-inside the function in that object, then the 'this' keyword would point to the global object.Can get around that by using another 
-variable self and setting it, var self = this; inside the first level function, then we can use this self variable instead of the
-this keyword inside internal functions.
+inside the function in that object, then the 'this' keyword would point to the global object. It's like a bug in JS. Can get around 
+that by using another variable 'self' and setting it, var self = this; inside the first level function, then we can use this 'self' 
+variable instead of the 'this' keyword inside internal functions. We can do this because objects are set by reference.
+{
+  ...
+  addAll: function addAll(pieces) {
+    var self = this;
+    _.each(pieces, function (piece) {
+      self.add(piece);
+    });
+  },
+  ...
+}
+Another way is to use arrow functions in ES6. Arrow functions do not have their own this value. The value of this inside an 
+arrow function is always inherited from the enclosing scope.
+{
+  ...
+  addAll: function addAll(pieces) {
+    _.each(pieces, piece => this.add(piece));
+  },
+  ...
+}
 
 Function parameters are listed inside the parentheses () in the function definition.
 Function arguments are the values received by the function when it is invoked.
@@ -89,7 +109,7 @@ Arrays are collections of anything. The elements can combination of different ty
 Arrays with named indexes are called associative arrays (or hashes). JavaScript does not support arrays with named indexes.
 In JavaScript, arrays use numbered indexes. In JavaScript, objects use named indexes. Arrays are a special kind of objects, with numbered indexes.
 
-JS doesn't have function overloading. There are patterns to emulate that.
+JS doesn't have function overloading since it allows to pass any number of parameters of any type. There are patterns to emulate that.
 
 Syntax parser of JS engine goes through the code character-by-character, uses rules to decide whats valid syntax and decides what is 
 intended. Happens before code is executed.
@@ -98,7 +118,7 @@ Automatic semicolon insertion - can be dangerous. semicolons are optional. as sy
 a semicolon to be present but missing, it puts it there.
 example: return
 	{ firstname: "Parth"}
-there is carriage return(next line0 after return keyword, so JS automatically inserts a semicolon, and value returned is undefined and not
+there is carriage return(next line after 'return' keyword, so JS automatically inserts a semicolon, and value returned is undefined and not
 the object.
 should do this instead: (put bracket in same line)
 return {
@@ -121,7 +141,7 @@ Same for function expressions
 // IIFE
 var firstname = 'John';
 // not putting the whole function expression inside parantheses would give error as parser sees word function and expects a func statement.
-//but this is valid as it sees ( as the first character and then doesnt expect a function statement
+//but this is valid as it sees ( as the first character and then doesnt expect a function statement.
 (function(name) {  
     var greeting = 'Inside IIFE: Hello';
     console.log(greeting + ' ' + name);
@@ -147,7 +167,7 @@ sayHi('Tony'); //outputs Hi Tony
 How does the sayHi function know the value for whattosay, even as the greet function was popped off the execution stack?
 This is possible beacause of closures. Under normal circumstances, JS engine clears out(process called garbage collection) the space in 
 memory where the variables/functions created inside the execution context live, after execution context is popped off. But now the whattosay
-stays there in memory, and when sayHi is called annd its execution context is created, it is not able to find the value for whattosay in its
+stays there in memory, and when sayHi is called and its execution context is created, it is not able to find the value for whattosay in its
 own variable environment, so it goes up the scope chain with the outer lexical environment reference. Even though execution context of greet
 was popped off, sayHi still has reference to memory of its outer environment. So any functions created inside of greet will have reference to 
 its memory(which stays there), even if it has been popped off the execution stack. So the execution context has 'closed in' its outer variables,
@@ -272,9 +292,9 @@ var logName = function(lang1, lang2) {
     console.log('Arguments: ' + lang1 + ' ' + lang2);
     console.log('-----------');   
 }
-
 var logPersonName = logName.bind(person); 
 //using the logName function object and not invoking it (). 'this' variable will bind to 'person' object when the function runs. bind return a new copy of the function.
+
 logPersonName('en'); //outputs Logged: John Doe and Arguments: en undefined
 logName.call(person, 'en', 'es'); //calls the function but also lets decide what 'this' will mean and allows parameters. It executes directly, does not make copy.
 logName.apply(person, ['en', 'es']); //only difference between call and apply is that apply wants array of parameters.

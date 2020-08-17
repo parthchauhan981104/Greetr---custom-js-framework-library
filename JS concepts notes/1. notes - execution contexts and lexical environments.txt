@@ -36,6 +36,18 @@ Function in its entirety is placed into memory space, meaning that the function,
 inside the function is being executed. Variables have 'undefined' values as a placeholder. Value assignemnt happens
 in execution phase. So should not rely on hoisting and should always access variables after they have been assigned
 values.
+console.log(x); //outputs 'undefined' , x is available but it has value undefined untill its set in execution phase
+x=5;
+var x;
+
+console.log(y); //outputs 'undefined'
+var y = 5;
+
+z=5;
+console.log(z); //outputs 5
+var z;
+
+Variables and constants declared with let or const are not hoisted!
 
 undefined is a special keyword/value meaning the variable hasn't been set, but it takes space in memory.
 we can set a variable to undefined explicitly, but shouldn't.
@@ -59,6 +71,19 @@ When one function finishes, it pops from stack.
 Variable environment - where variable live(Scope) and how they relate to each other in memory. Variables(var)
 having same name but declared again inside different functions - have different values, as they are in their
 own execution contexts.
+
+Variables declared within a JavaScript function, become LOCAL to the function.
+Local variables have Function scope: They can only be accessed from within the function.
+
+If you assign a value to a variable that has not been declared, it will automatically become a GLOBAL variable.
+// code here can use carName
+console.log(carName);
+function myFunction() {
+  carName = "Volvo";
+}
+In "Strict Mode", undeclared variables are not automatically global.
+Local variables are deleted when the function is completed.
+In a web browser, global variables are deleted when you close the browser window (or tab).
 
 Scope Chain - Scope means where a variable can be accessed. Scope chain is act for searching for chain of reference 
 to outer environment.
