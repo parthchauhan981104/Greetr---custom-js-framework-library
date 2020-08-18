@@ -3,9 +3,47 @@ Single variable can hold different type of values at different times during exec
 
 Primitive types - represent a single value(not an object). 6 types - undefined, null, boolean, number
 (in JS there is only one numeric type - floating pt. number), string, symbol(ES6).
-
 A variable without a value, has the value undefined. The type is also undefined.
 the data type of null is an object. undefined and null are equal in value but different in type.
+
+let myNumber = 23
+When this code is executed, JS will… - 
+1. Create a unique identifier for your variable (“myNumber”)
+2. Allocate an address in memory (will be assigned at runtime) 
+3. Store a value at the address allocated (23)
+While we say, “myNumber equals 23”, more technically, myNumber equals the memory address that holds the value 23.
+let newVar = myNumber;
+newVar would also equal the memory address that holds the value 23.
+But Primitive data types in JS are immutable.
+myNumber = myNumber + 1; //initially myNumber = 23
+JS will allocate a new address in memory, store 24 as its value, and “myNumber” will point to the new address.
+newVar will have the value of 23 since it still points to the original memory address.
+The call stack is where primitives are stored (in addition to function calls).
+The heap is where non-primitives are stored. The key difference is that the heap can store unordered data that 
+can grow dynamically—perfect for arrays and objects.
+let myArray = [];
+When you declare a variable “myArray” and assign it a non-primitive data type like “[]”, this is what happens in memory:
+1. Create a unique identifier for your variable (“myArray”).
+2. Allocate an address in memory (will be assigned at runtime). (
+3. Store a value of a memory address allocated on the heap (will be assigned at runtime).
+4. The memory address on the heap stores the value assigned (the empty array []).
+
+The correct way to interpret “change” is a change in memory address. let allows you to change memory addresses. 
+Const does not allow you to change memory addresses.
+const importantID = 489;
+importantID = 100; // TypeError: Assignment to constant variable
+When 100 is assigned to “importantID”, since 100 is a primitive, a new memory address is allocated, and the value 
+of 100 is stored there. Then JS tries to assign the new memory address to “importantID”, and this is where the 
+error is thrown.
+const myArray = [];
+When myArray is declared, a memory address is allocated on the call stack, and the value is a memory address that
+is allocated on the heap. The value stored on the heap is the actual empty array.
+myArray.push(1); //no error
+This pushes number onto the array that exists in the heap. However, the memory address of “myArray” has not changed.
+myArray = ['a']; or myArray = 3; // these would throw error. New memory address is created for primitive value 3 
+on call stack. For 2nd example -  a new memory address on call stack which will have value as the memory address 
+on heap which actually stores ['a']. But const doesn't allow changing memory address. So We cant reassign a const.
+
 
 Operator - actually a special function that is syntactically written differently. generally takes two
 parameters and returns one result. Knowing the type of return value is important as the type of 

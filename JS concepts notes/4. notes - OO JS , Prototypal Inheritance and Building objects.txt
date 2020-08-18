@@ -31,6 +31,29 @@ person.getFormalFullName = function() {
 }
 console.log(john.getFormalFullName());
 console.log(jane.getFormalFullName());
+/////////////////////////////////////////////////////////////////////
+const person = {
+  age: 31,
+  printAge() {
+    console.log(this.age);
+  },
+};
+const outputInfo = person.printAge;
+outputInfo(); // outputs undefined (not 31)
+The value this points at is set by the surrounding execution context. And this generally refers to “on what the function was called”.
+So person.printAge() would’ve worked because this would be used in a function that’s executed directly on person.
+When we first store a pointer to that function in another variable (outputInfo), that changes though.
+When outputInfo() is executed, it’s not called on person. It’s actually called on nothing - it’s simply executed in the global script 
+execution context. And there, this refers to the window object in the browser. That window object has no age property, hence we get undefined.
+'this' refers to “on what the function was called”.
+It gets a bit more tricky in some cases like addEventListener:
+const btn = document.querySelector('button');
+btn.addEventListener('click', function() {
+  console.log(this);
+});
+In this example, 'this' would not refer to the window object, even though it’s not called on anything.
+Instead, this will refer to the element on which the event occurs. But that’s just a special thing of addEventListener - essentially, the value
+of this can be changed when the function is called. addEventListener does that but you can do that, too - for example with bind().
 
 Everything in JS is an object(or a primitive). All objects including functions, arrays have a prototype, except the Base object.
 Object {} is the base object(bottom of the prototype chain), has properties and methods that all objects can access. 

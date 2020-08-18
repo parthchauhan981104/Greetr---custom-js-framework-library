@@ -1,0 +1,46 @@
+Getters - The get syntax binds an object property to a function that will be called when that property is looked up.
+Sometimes it is desirable to allow access to a property that returns a dynamically computed value, or you may want 
+to reflect the status of an internal variable without requiring the use of explicit method calls. 
+It must have exactly zero parameters. Creates a pseudo-property latest for object obj, which return last item in log.
+Getters give you a way to define a property of an object, but they do not calculate the property's value until it is
+accessed. A getter defers the cost of calculating the value until the value is needed.
+const obj = {
+  log: ['a', 'b', 'c'],
+  get latest() {
+    if (this.log.length === 0) {
+      return undefined;
+    }
+    return this.log[this.log.length - 1];
+  }
+};
+console.log(obj.latest); // expected output: "c"
+delete obj.latest; // delete the getter
+It is not possible to simultaneously have a getter bound to a property and have that property actually hold a value,
+although it is possible to use a getter and a setter in conjunction to create a type of pseudo-property.
+
+Setters - The set syntax binds an object property to a function to be called when there is an attempt to set that 
+property. A setter can be used to execute a function whenever a specified property is attempted to be changed.
+Defines a pseudo-property current of object language. When current is assigned a value, it updates log with that value:
+current is not defined, and any attempts to access it will result in undefined.
+const language = {
+  set current(name) {
+    this.log.push(name);
+  },
+  log: []
+};
+language.current = 'EN';
+language.current = 'FA';
+console.log(language.log); // expected output: Array ["EN", "FA"]
+
+"use strict"; Defines that JavaScript code should be executed in "strict mode". It is not a statement, but a literal 
+expression. With strict mode, you can not, for example, use undeclared variables. Declared at the beginning of a 
+script, it has global scope (all code in the script will execute in strict mode). Declared inside a function, it has 
+local scope (only the code inside the function is in strict mode). mistyping a variable name creates a new global 
+variable. In strict mode, this will throw an error, making it impossible to accidentally create a global variable.
+In strict mode, any assignment to a non-writable property, a getter-only property, a non-existing property, a 
+non-existing variable, or a non-existing object, will throw an error. Deleting a variable (or object) is not allowed.
+Deleting a function is not allowed. Duplicating a parameter name is not allowed. 
+The this keyword in functions behaves differently in strict mode. The this keyword refers to the object that called the 
+function. If the object is not specified, functions in strict mode will return undefined and functions in normal mode 
+will return the global object (window). The "use strict" directive is only recognized at the beginning of a script 
+or a function.
